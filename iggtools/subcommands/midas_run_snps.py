@@ -315,11 +315,12 @@ def midas_run_snps(args):
 
         write_snps_summary(species_pileup_stats, f"{args.outdir}/snps/output_sc{args.species_cov}/summary.txt")
 
-    except:
+    except Exception as err:
         if not args.debug:
             tsprint("Deleting untrustworthy outputs due to error. Specify --debug flag to keep.")
             command(f"rm -rf {tempdir}", check=False)
             command(f"rm -rf {outputdir}", check=False)
+        raise err
 
 
 @register_args

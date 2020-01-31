@@ -288,10 +288,11 @@ def midas_run_genes(args):
         species_markers_coverage = normalize(genes, covered_genes, markers)
 
         write_results(args.outdir, species, num_covered_genes, species_markers_coverage, species_mean_coverage)
-    except:
+    except Exception as err:
         if not args.debug:
             tsprint("Deleting untrustworthy outputs due to error.  Specify --debug flag to keep.")
             command(f"rm -rf {tempdir}", check=False)
+        raise err
 
 
 @register_args
