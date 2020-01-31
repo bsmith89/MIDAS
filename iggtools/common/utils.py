@@ -104,7 +104,7 @@ class InputStream:
             path = smart_glob(path, expected=1)[0]
         cat = 'set -o pipefail; '
         if path.startswith("s3://"):
-            cat += f"aws s3 --quiet cp {path} -"
+            cat += f"aws s3 --quiet cp --no-sign-request {path} -"
         else:
             cat += f"cat {path}"
         if path.endswith(".lz4"):
@@ -284,7 +284,7 @@ def smart_ls(pdir, missing_ok=True, memory=None):
                 s3_dir = pdir
                 if not s3_dir.endswith("/"):
                     s3_dir += "/"
-                output = backtick(["aws", "s3", "ls", s3_dir])
+                output = backtick(["aws", "s3", "ls", '--no-sign-request', s3_dir])
                 rows = output.strip().split('\n')
                 result = [r.split()[-1] for r in rows]
             else:
@@ -639,7 +639,7 @@ def download_reference(ref_path, local_dir="."):
     if not os.path.exists(local_dir):
         command(f"mkdir -p {local_dir}")
     try:
-        command(f"set -o pipefail; aws s3 cp --only-show-errors {ref_path} - | {uncompress_cmd} > {local_path}")
+        command(f"set -o pipefail; aws s3 cp --only-show-errors --no-sign-request {ref_path} - | {uncompress_cmd} > {local_path}")
     except:
         command(f"rm -f {local_path}")
         raise
