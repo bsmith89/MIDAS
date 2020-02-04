@@ -52,6 +52,11 @@ def register_args(main_func):
     subparser.add_argument('--threads',
                            default=num_physical_cores, type=int,
                            help=f"Number of threads used by subprocesses (e.g. hs-blastn), default {num_physical_cores}")
+    subparser.add_argument('--db-path',
+                           default=params.inputs.igg,
+                           help=("Path to iggtools DB. "
+                                 "May be an s3:// URL pointing to a publicly "
+                                 "accessible bucket."))
     if False:
         # This is not currently in use.
         subparser.add_argument('--read_length',
@@ -270,7 +275,12 @@ def midas_run_species(args):
     command(f"rm -rf {tempdir}")
     command(f"mkdir -p {tempdir}")
 
-    markers_db_files = multithreading_map(download_reference, [f"s3://microbiome-igg/2.0/marker_genes/phyeco/phyeco.fa{ext}.lz4" for ext in ["", ".bwt", ".header", ".sa", ".sequence"]] + ["s3://microbiome-igg/2.0/marker_genes/phyeco/phyeco.map.lz4"])
+    markers_db_files = multithreading_map(
+        lambda s: download_reference(s, local_dir=tempdir),
+        [f"{args.db_path}/marker_genes/phyeco/phyeco.fa{ext}.lz4"
+         for ext in ["", ".bwt", ".header", ".sa", ".sequence"]] +
+        [f"{args.db_path}/marker_genes/phyeco/phyeco.map.lz4"]
+                                          )
 
     db = UHGG()
     species_info = db.species

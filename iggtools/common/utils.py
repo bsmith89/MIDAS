@@ -638,12 +638,21 @@ def download_reference(ref_path, local_dir="."):
         command(f"rm -f {local_path}")
     if not os.path.exists(local_dir):
         command(f"mkdir -p {local_dir}")
-    try:
-        command(f"set -o pipefail; aws s3 cp --only-show-errors --no-sign-request {ref_path} - | {uncompress_cmd} > {local_path}")
-    except:
-        command(f"rm -f {local_path}")
-        raise
+    # Use s3 if appropriate.
+    if ref_path.lower().startswith('s3://'):
+        try:
+            command(f"set -o pipefail; aws s3 cp --only-show-errors --no-sign-request {ref_path} - | {uncompress_cmd} > {local_path}")
+        except:
+            command(f"rm -f {local_path}")
+            raise
+    else:  # Otherwise, use the local fs.
+        try:
+            command(f"set -o pipefail; cat {ref_path} | {uncompress_cmd} > {local_path}")
+        except:
+            command(f"rm -f {local_path}")
+            raise
     return local_path
+
 
 
 if __name__ == "__main__":
