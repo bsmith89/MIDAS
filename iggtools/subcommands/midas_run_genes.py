@@ -277,7 +277,7 @@ def midas_run_genes(args):
     if args.species is not None:
         args.species_cov = 'X'
 
-    tempdir = f"{args.outdir}/snps/temp_sc{args.species_cov}"
+    tempdir = f"{args.outdir}/genes/temp_sc{args.species_cov}"
     if args.debug and os.path.exists(tempdir):
         tsprint(f"INFO:  Reusing existing temp data in {tempdir} according to --debug flag.")
     else:
