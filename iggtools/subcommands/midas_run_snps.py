@@ -320,7 +320,7 @@ def midas_run_snps(args):
 
     try:
         species_list = load_species_list(species_list_path)
-        local_toc = download_reference(outputs.genomes)
+        local_toc = download_reference(outputs.genomes, tempdir)
         db = UHGG(local_toc)
         representatives = db.representatives
 
