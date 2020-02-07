@@ -279,8 +279,8 @@ def midas_run_species(args):
         lambda s: download_reference(s, local_dir=tempdir),
         [f"{args.db_path}/marker_genes/phyeco/phyeco.fa{ext}.lz4"
          for ext in ["", ".bwt", ".header", ".sa", ".sequence"]] +
-        [f"{args.db_path}/marker_genes/phyeco/phyeco.map.lz4"]
-                                          )
+        [f"{args.db_path}/marker_genes/phyeco/phyeco.map.lz4"],
+                                          num_threads=20)
 
     db = UHGG()
     species_info = db.species
