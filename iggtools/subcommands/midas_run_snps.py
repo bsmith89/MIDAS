@@ -61,6 +61,8 @@ def register_args(main_func):
     subparser.add_argument('--threads',
                            default=num_physical_cores, type=int,
                            help=f"Number of threads used by subprocesses (e.g. hs-blastn), default {num_physical_cores}")
+    subparser.add_argument('--verbose', '-v', action='store_true',
+                           help="Print bowtie2 stats every 60 seconds.")
     if False:
         # This is unused.
         subparser.add_argument('--species_topn',
@@ -346,7 +348,7 @@ def midas_run_snps(args):
             build_bowtie2_db(tempdir, bt2_db_name, contigs_files, threads=args.threads)
 
         # Use Bowtie2 to map reads to a representative genomes
-        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=True, threads=args.threads)
+        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=True, threads=args.threads, verbose=args.verbose)
 
         # Use mpileup to identify SNPs
         samtools_index(args, tempdir, bt2_db_name, threads=args.threads)

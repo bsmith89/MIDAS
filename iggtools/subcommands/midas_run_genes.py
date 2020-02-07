@@ -98,7 +98,8 @@ def register_args(main_func):
     subparser.add_argument('--threads',
                            default=num_physical_cores, type=int,
                            help=f"Number of threads used by subprocesses (e.g. bowtie2-build, bowtie2, samtools view), default {num_physical_cores}")
-
+    subparser.add_argument('--verbose', '-v', action='store_true',
+                           help="Print bowtie2 stats every 60 seconds.")
 
     return main_func
 
@@ -306,7 +307,7 @@ def midas_run_genes(args):
         # Also colocate/cache/download in master for multiple slave subcommand invocations.
         bt2_db_name = "pangenomes"
         build_bowtie2_db(tempdir, bt2_db_name, centroids_files, threads=args.threads)
-        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=False, threads=args.threads)
+        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=False, threads=args.threads, verbose=args.verbose)
 
         # Compute coverage of pangenome for each present species and write results to disk
         species, genes = scan_centroids(centroids_files)
