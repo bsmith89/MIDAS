@@ -329,7 +329,6 @@ def midas_run_snps(args):
             for suffix in ['1.bt2', '2.bt2', '3.bt2', '4.bt2', 'rev.1.bt2', 'rev.2.bt2', 'fa']:
                 command(f"ln -rs {args.prebuilt_index}.{suffix} {tempdir}/{bt2_db_name}.{suffix}")
 
-
     try:
         species_list = load_species_list(species_list_path)
         local_toc = download_reference(outputs.genomes, tempdir)

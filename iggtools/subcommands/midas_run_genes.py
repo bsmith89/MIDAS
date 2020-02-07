@@ -7,7 +7,7 @@ from pysam import AlignmentFile  # pylint: disable=no-name-in-module
 
 from iggtools.common.argparser import add_subcommand
 from iggtools.common.utils import tsprint, command, InputStream, OutputStream, select_from_tsv, multithreading_hashmap, download_reference, num_physical_cores
-from iggtools.params import outputs
+from iggtools.params import outputs, inputs
 from iggtools.common.samples import parse_species_profile, select_species
 from iggtools.common.bowtie2 import build_bowtie2_db, bowtie2_align
 
@@ -309,10 +309,9 @@ def midas_run_genes(args):
         bowtie2_align(args, tempdir, bt2_db_name, sort_aln=False, threads=args.threads)
 
         # Compute coverage of pangenome for each present species and write results to disk
-        marker_genes_map = "s3://microbiome-igg/2.0/marker_genes/phyeco/phyeco.map.lz4"
         species, genes = scan_centroids(centroids_files)
         num_covered_genes, species_mean_coverage, covered_genes = count_mapped_bp(args, tempdir, genes)
-        markers = scan_markers(genes, marker_genes_map)
+        markers = scan_markers(genes, inputs.marker_genes_map)
         species_markers_coverage = normalize(genes, covered_genes, markers)
 
         write_results(args.outdir, species, num_covered_genes, species_markers_coverage, species_mean_coverage)
