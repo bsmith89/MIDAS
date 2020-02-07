@@ -294,7 +294,7 @@ def midas_run_snps(args):
         full_species_profile = parse_species_profile(args.outdir)
         species_profile = select_species(full_species_profile, args.species_cov)
 
-        local_toc = download_reference(outputs.genomes)
+        local_toc = download_reference(outputs.genomes, tempdir)
         db = UHGG(local_toc)
         representatives = db.representatives
 
