@@ -6,7 +6,7 @@ from iggtools.params import inputs
 igg = inputs.igg
 igg_local = inputs.igg_local
 genomes = f"{igg_local}/genomes.tsv.lz4"
-cleaned_imports = f"{igg}/cleaned_imports"
+cleaned_imports = f"{igg_local}/cleaned_imports"
 pangenomes = f"{igg}/pangenomes"
 annotations = f"{igg}/gene_annotations"
 opsdir = f"{igg}/operations"
