@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os
-from iggtools.common.utils import tsprint, num_physical_cores, command, split
+from iggtools.common.utils import tsprint, command, split, num_physical_cores
 
 
 def build_bowtie2_db(bt2_db_dir, bt2_db_name, downloaded_files):
@@ -21,7 +21,7 @@ def build_bowtie2_db(bt2_db_dir, bt2_db_name, downloaded_files):
     command(f"bowtie2-build --threads {num_physical_cores} {bt2_db_dir}/{bt2_db_name}.fa {bt2_db_dir}/{bt2_db_name} > {bt2_db_dir}/bowtie2-build.log")
 
 
-def bowtie2_align(args, bt2_db_dir, bt2_db_name, sort_aln=False):
+def bowtie2_align(args, bt2_db_dir, bt2_db_name, sort_aln=False, verbose=False):
     """
     Use Bowtie2 to map reads to specified representative genomes or
     collections of centroids genes for the pangenome flow.
@@ -44,8 +44,13 @@ def bowtie2_align(args, bt2_db_dir, bt2_db_name, sort_aln=False):
     else:
         r1 = f"-U {args.r1}"
 
+    if verbose:
+        maybe_verbose = "--met 300 --met-stderr"
+    else:
+        maybe_verbose = ""
+
     try:
-        bt2_command = f"bowtie2 --no-unal -x {bt2_db_dir}/{bt2_db_name} {max_reads} --{aln_mode} --{aln_speed} --threads {num_physical_cores} -q {r1} {r2}"
+        bt2_command = f"bowtie2 --no-unal -x {bt2_db_dir}/{bt2_db_name} {max_reads} {maybe_verbose} --{aln_mode} --{aln_speed} --threads {num_physical_cores} -q {r1} {r2}"
         if sort_aln:
             command(f"set -o pipefail; {bt2_command} | \
                     samtools view --threads {num_physical_cores} -b - | \

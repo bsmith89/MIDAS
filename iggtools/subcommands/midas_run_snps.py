@@ -49,6 +49,8 @@ def register_args(main_func):
                            metavar='FLOAT',
                            default=DEFAULT_SPECIES_COVERAGE,
                            help=f"Include species with >X coverage ({DEFAULT_SPECIES_COVERAGE})")
+    subparser.add_argument('--verbose', '-v', action='store_true',
+                           help="Print bowtie2 stats every 60 seconds.")
     if False:
         # This is unused.
         subparser.add_argument('--species_topn',
@@ -307,7 +309,7 @@ def midas_run_snps(args):
         # Use Bowtie2 to map reads to a representative genomes
         bt2_db_name = "repgenomes"
         build_bowtie2_db(tempdir, bt2_db_name, contigs_files)
-        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=True)
+        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=True, verbose=args.verbose)
 
         # Use mpileup to identify SNPs
         samtools_index(args, tempdir, bt2_db_name)

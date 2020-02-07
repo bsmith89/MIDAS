@@ -92,6 +92,8 @@ def register_args(main_func):
                            action='store_true',
                            default=False,
                            help='FASTA/FASTQ file in -1 are paired and contain forward AND reverse reads')
+    subparser.add_argument('--verbose', '-v', action='store_true',
+                           help="Print bowtie2 stats every 60 seconds.")
 
     return main_func
 
@@ -278,7 +280,7 @@ def midas_run_genes(args):
         # Also colocate/cache/download in master for multiple slave subcommand invocations.
         bt2_db_name = "pangenomes"
         build_bowtie2_db(tempdir, bt2_db_name, centroids_files)
-        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=False)
+        bowtie2_align(args, tempdir, bt2_db_name, sort_aln=False, verbose=args.verbose)
 
         # Compute coverage of pangenome for each present species and write results to disk
         marker_genes_map = "s3://microbiome-igg/2.0/marker_genes/phyeco/phyeco.map.lz4"
