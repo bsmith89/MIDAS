@@ -54,6 +54,10 @@ def register_args(main_func):
     subparser.add_argument('--species',
                            help=("File listing set of species IDs to search "
                                  "against. When set, species_cov is ignored."))
+    subparser.add_arugment('--prebuilt-index',
+                           help=("Prebuilt species index.  The --species flag"
+                                 "must be set and the index *must match* the "
+                                 "list given."))
     subparser.add_argument('--threads',
                            default=num_physical_cores, type=int,
                            help=f"Number of threads used by subprocesses (e.g. hs-blastn), default {num_physical_cores}")
@@ -309,6 +313,8 @@ def midas_run_snps(args):
     if not os.path.exists(outputdir):
         command(f"mkdir -p {outputdir}")
 
+    bt2_db_name = "repgenomes"
+
     if args.species is None:
         # The full species profile must exist -- it is output by run_midas_species.
         # Restrict to species above requested coverage.
@@ -317,6 +323,10 @@ def midas_run_snps(args):
         species_list_path = dump_species_list(list(species_profile.keys()), tempdir)
     else:
         species_list_path = args.species
+        if args.prebuilt_index:
+            for suffix in ['1.bt2', '2.bt2', '3.bt2', '4.bt2', 'rev.1.bt2', 'rev.2.bt2', 'fa']:
+                command(f"ln -rs {args.prebuilt_index}.{suffix} {tempdir}/{bt2_db_name}.{suffix}")
+
 
     try:
         species_list = load_species_list(species_list_path)
@@ -331,9 +341,10 @@ def midas_run_snps(args):
         # Since this is *not* CPU bound, we use 20 threads.
         contigs_files = multithreading_hashmap(download_contigs, species_list, num_threads=20)
 
+        if not args.prebuilt_index:
+            build_bowtie2_db(tempdir, bt2_db_name, contigs_files, threads=args.threads)
+
         # Use Bowtie2 to map reads to a representative genomes
-        bt2_db_name = "repgenomes"
-        build_bowtie2_db(tempdir, bt2_db_name, contigs_files, threads=args.threads)
         bowtie2_align(args, tempdir, bt2_db_name, sort_aln=True, threads=args.threads)
 
         # Use mpileup to identify SNPs
