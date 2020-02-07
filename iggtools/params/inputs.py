@@ -9,7 +9,7 @@ uhgg_genomes = "s3://jason.shi-bucket/IGGdb2.0/clean_set"
 # Check out https://github.com/czbiohub/iggtools/wiki#marker-genes
 igg = "s3://microbiome-igg/2.0"
 marker_set = "phyeco"
-marker_genes_db_list = [f"s3://microbiome-igg/2.0/marker_genes/{marker_set}/{marker_set}.fa{ext}.lz4"
+marker_genes_db_list = [f"{igg}/marker_genes/{marker_set}/{marker_set}.fa{ext}.lz4"
                         for ext in ["", ".bwt", ".header", ".sa", ".sequence"]]
 marker_genes_map = f"{igg}/marker_genes/{marker_set}/{marker_set}.map.lz4"
 marker_genes_hmm = f"{igg}/marker_genes_models/{marker_set}/marker_genes.hmm.lz4"
