@@ -25,6 +25,7 @@ def register_args(main_func):
     subparser.add_argument('outdir',
                            type=str,
                            help="""Path to directory to store results.  Name should correspond to unique sample identifier.""")
+    subparser.add_argument('--tempdir', help="Use TEMPDIR for intermediate files.")
     subparser.add_argument('-1',
                            dest='r1',
                            required=True,
@@ -254,7 +255,10 @@ def scan_markers(genes, marker_genes_map_file):
 
 def midas_run_genes(args):
 
-    tempdir = f"{args.outdir}/genes/temp_sc{args.species_cov}"
+    if not args.tempdir:
+        tempdir = f"{args.outdir}/genes/temp_sc{args.species_cov}"
+    else:
+        tempdir = args.tempdir
 
     if args.debug and os.path.exists(tempdir):
         tsprint(f"INFO:  Reusing existing temp data in {tempdir} according to --debug flag.")

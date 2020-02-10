@@ -20,6 +20,7 @@ def register_args(main_func):
     subparser.add_argument('outdir',
                            type=str,
                            help="""Path to directory to store results.  Name should correspond to unique sample identifier.""")
+    subparser.add_argument('--tempdir', help="Use TEMPDIR for intermediate files.")
     subparser.add_argument('-1',
                            dest='r1',
                            required=True,
@@ -262,7 +263,10 @@ def write_abundance(outdir, species_abundance):
 
 def midas_run_species(args):
 
-    tempdir = f"{args.outdir}/species/temp/"
+    if not args.tempdir:
+        tempdir = f"{args.outdir}/species/temp/"
+    else:
+        tempdir = args.tempdir
 
     command(f"rm -rf {tempdir}")
     command(f"mkdir -p {tempdir}")
