@@ -659,7 +659,7 @@ def download_tarball(ref_path, local_dir="."):
     if not os.path.exists(local_dir):
         command(f"mkdir -p {local_dir}")
     try:
-        command(f"set -o pipefail; wget -q -O- {ref_path} | {uncompress_cmd} {local_dir}")
+        command(f"set -o pipefail; curl --silent {ref_path} | {uncompress_cmd} {local_dir}")
     except:
         command(f"rm -rf {local_path}")
         raise
